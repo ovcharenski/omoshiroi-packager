@@ -46,7 +46,7 @@ from .version import (
     sort_versions,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "ovcharenski"
 
 __all__ = [
