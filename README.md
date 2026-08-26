@@ -424,31 +424,6 @@ extract_zip(zip_data, Path("/path/to/extract"))
 file_list = get_zip_file_list(zip_data)
 ```
 
-## Development
-
-```bash
-# Clone repository
-git clone https://github.com/ovcharenski/omoshiroi-packager.git
-cd omoshiroi-packager
-
-# Install in development mode
-pip install -e ".[dev]"
-
-# Run tests
-pytest tests/ -v
-
-# Build package
-python -m build
-
-# Format code
-black .
-ruff check --fix .
-
-# Run linters
-ruff check .
-mypy .
-```
-
 ## License
 
 MIT
