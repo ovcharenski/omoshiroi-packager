@@ -2,7 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/omoshiroi-packager.svg)](https://badge.fury.io/py/omoshiroi-packager)
 [![Python](https://img.shields.io/pypi/pyversions/omoshiroi-packager.svg)](https://pypi.org/project/omoshiroi-packager/)
-[![License](https://img.shields.io/pypi/l/omoshiroi-packager.svg)](https://github.com/ovcharenski/omoshiroi-packager/blob/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/omoshiroi-packager.svg)](https://github.com/ovcharenski/omoshiroi-packager/blob/master/LICENSE)
 
 Version parser and packaging utilities with multiple channel support.
 
