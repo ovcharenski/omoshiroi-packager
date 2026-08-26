@@ -1,0 +1,13 @@
+# Include files for distribution
+include README.md
+include LICENSE
+include pyproject.toml
+include .env.example
+
+# Exclude test files
+prune tests/
+prune .github/
+
+# Exclude development files
+exclude build.py
+exclude .gitignore
