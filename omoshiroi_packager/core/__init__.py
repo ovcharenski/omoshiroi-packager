@@ -1,4 +1,4 @@
-"""Core functionality for the packages module."""
+"""Core functionality for omoshiroi-packager."""
 
 from .manifest import ManifestManager
 from .packager import Packager

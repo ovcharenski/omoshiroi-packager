@@ -11,25 +11,33 @@ Channels (in order from earliest to latest):
     dev < alpha < beta < rc < stable < hotfix
 """
 
+from __future__ import annotations  # ← ЭТО ГЛАВНОЕ
+
 import re
-from typing import Optional, Tuple, Dict, Any, List
+from typing import Any, Dict, List, Optional, Tuple
 
 
 class InvalidVersion(ValueError):
     """Exception raised for invalid version strings."""
-    pass
 
 
 class Version:
     """Version class with support for multiple channels."""
     
     __slots__ = (
-        "_major", "_minor", "_patch", "_build",
-        "_channel", "_channel_major", "_channel_minor", "_channel_patch",
-        "_key_cache", "_string_cache"
+        "_build",
+        "_channel",
+        "_channel_major",
+        "_channel_minor",
+        "_channel_patch",
+        "_key_cache",
+        "_major",
+        "_minor",
+        "_patch",
+        "_string_cache",
     )
     
-    _CHANNEL_ORDER = {
+    _CHANNEL_ORDER: Dict[str, int] = {
         "dev": 0,
         "alpha": 1,
         "beta": 2,
@@ -238,9 +246,15 @@ class Version:
     def __repr__(self) -> str:
         return f"<Version('{self}')>"
     
-    # Version manipulation
-    def promote(self) -> "Version":
-        channels = ["dev", "alpha", "beta", "rc", "stable", "hotfix"]
+# Version manipulation
+    def promote(self) -> Version:
+        """
+        Promote version to next channel.
+        
+        dev -> alpha -> beta -> rc -> stable
+        Stable stays stable (does NOT go to hotfix).
+        """
+        channels = ["dev", "alpha", "beta", "rc", "stable"]
         current_idx = channels.index(self._channel)
         
         if current_idx < len(channels) - 1:
@@ -248,27 +262,33 @@ class Version:
             return Version(f"{self.full_version}-{next_channel}.1")
         
         return self
-    
-    def demote(self) -> "Version":
+
+    def demote(self) -> Version:
+        """
+        Demote version to previous channel.
+        
+        hotfix -> stable -> rc -> beta -> alpha -> dev
+        Dev stays dev (cannot demote further).
+        """
         channels = ["dev", "alpha", "beta", "rc", "stable", "hotfix"]
         current_idx = channels.index(self._channel)
         
         if current_idx > 0:
             prev_channel = channels[current_idx - 1]
             return Version(f"{self.full_version}-{prev_channel}.1")
-        
+
         return self
     
-    def next_patch(self) -> "Version":
+    def next_patch(self) -> Version:
         return Version(f"{self._major}.{self._minor}.{self._patch + 1}")
     
-    def next_minor(self) -> "Version":
+    def next_minor(self) -> Version:
         return Version(f"{self._major}.{self._minor + 1}.0")
     
-    def next_major(self) -> "Version":
+    def next_major(self) -> Version:
         return Version(f"{self._major + 1}.0.0")
     
-    def with_build(self, build: int) -> "Version":
+    def with_build(self, build: int) -> Version:
         base = f"{self._major}.{self._minor}.{self._patch}.{build}"
         if self._channel != "stable":
             suffix = f"-{self._channel}.{self._channel_major}"
@@ -279,7 +299,7 @@ class Version:
             return Version(base + suffix)
         return Version(base)
     
-    def with_channel(self, channel: str) -> "Version":
+    def with_channel(self, channel: str) -> Version:
         if channel not in self._VALID_CHANNELS:
             raise ValueError(f"Invalid channel: {channel}")
         
@@ -288,7 +308,7 @@ class Version:
         
         return Version(f"{self.full_version}-{channel}.1")
     
-    def get_stable_version(self) -> "Version":
+    def get_stable_version(self) -> Version:
         return Version(self.full_version)
     
     # Serialization
@@ -329,7 +349,7 @@ class Version:
         )
     
     @classmethod
-    def from_tuple(cls, data: tuple) -> "Version":
+    def from_tuple(cls, data: tuple) -> Version:
         major, minor, patch, build, channel, ch_major, ch_minor, ch_patch = data
         
         version = f"{major}.{minor}"

@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+"""
+Build script for omoshiroi-packager.
+"""
+
+import os
+import sys
+import subprocess
+import shutil
+import glob
+
+
+def run_command(cmd: list, description: str = None) -> bool:
+    """Run a command and check for errors."""
+    if description:
+        print(f"\n→ {description}")
+    
+    try:
+        subprocess.run(cmd, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"✗ Error: {e}")
+        return False
+    except KeyboardInterrupt:
+        print("\n✗ Cancelled by user")
+        return False
+
+
+def clean():
+    """Clean build artifacts."""
+    print("\n→ Cleaning build artifacts...")
+    
+    # Clean build directories
+    for pattern in ["build", "dist", "*.egg-info", ".pytest_cache", ".mypy_cache", ".ruff_cache"]:
+        for path in glob.glob(pattern):
+            if os.path.isdir(path):
+                shutil.rmtree(path, ignore_errors=True)
+            elif os.path.isfile(path):
+                os.remove(path)
+    
+    # Clean __pycache__
+    for root, dirs, files in os.walk("."):
+        if "__pycache__" in dirs:
+            shutil.rmtree(os.path.join(root, "__pycache__"), ignore_errors=True)
+    
+    print("✅ Clean complete!")
+
+
+def lint():
+    """Run linters."""
+    run_command([sys.executable, "-m", "pip", "install", "--quiet", "ruff", "mypy"])
+    run_command(["ruff", "check", "."])
+    run_command(["mypy", "."])
+
+
+def test():
+    """Run tests."""
+    run_command([sys.executable, "-m", "pip", "install", "--quiet", "pytest", "pytest-cov"])
+    run_command([sys.executable, "-m", "pytest", "tests/", "-v"])
+
+
+def build():
+    """Build the package."""
+    clean()
+    
+    # Install build dependencies
+    print("\n→ Installing build dependencies...")
+    run_command([sys.executable, "-m", "pip", "install", "--quiet", "build"])
+    
+    # Build
+    print("\n→ Building package...")
+    if run_command([sys.executable, "-m", "build"]):
+        print("\n✅ Build complete!")
+        print("📦 Run 'pip install -e .' to install in development mode")
+        print("📦 Run 'twine upload dist/*' to upload to PyPI")
+
+
+def format_code():
+    """Format code."""
+    run_command([sys.executable, "-m", "pip", "install", "--quiet", "black", "ruff"])
+    run_command(["black", "."])
+    run_command(["ruff", "check", "--fix", "."])
+
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Build and test omoshiroi-packager")
+    parser.add_argument("command", nargs="?", default="build",
+                       choices=["build", "test", "clean", "lint", "format"],
+                       help="Command to run")
+    
+    args = parser.parse_args()
+    
+    commands = {
+        "build": build,
+        "test": test,
+        "clean": clean,
+        "lint": lint,
+        "format": format_code,
+    }
+    
+    # Prevent infinite recursion
+    if args.command == "build":
+        build()
+    else:
+        commands[args.command]()

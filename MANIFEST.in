@@ -11,3 +11,4 @@ prune .github/
 # Exclude development files
 exclude build.py
 exclude .gitignore
+exclude .pre-commit-config.yaml

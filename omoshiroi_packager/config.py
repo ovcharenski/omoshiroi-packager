@@ -2,10 +2,11 @@
 Configuration management for the packages module.
 """
 
+from __future__ import annotations
+
 import os
-from pathlib import Path
-from typing import Optional
 from dataclasses import dataclass
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -28,7 +29,7 @@ class Config:
     tmp_dir: Path
     
     @classmethod
-    def from_env(cls, load_dotenv_file: bool = True) -> "Config":
+    def from_env(cls, load_dotenv_file: bool = True) -> Config:
         """
         Create configuration from environment variables.
         
@@ -44,18 +45,17 @@ class Config:
         if load_dotenv_file:
             load_dotenv()
         
-        manifest_dir = os.getenv('MANIFEST_DIR')
-        project_dir = os.getenv('PROJECT_DIR')
-        tmp_dir = os.getenv('TMP_DIR')
+        manifest_dir = os.getenv("MANIFEST_DIR")
+        project_dir = os.getenv("PROJECT_DIR")
+        tmp_dir = os.getenv("TMP_DIR")
         
-        # Validate required variables
         missing = []
         if not manifest_dir:
-            missing.append('MANIFEST_DIR')
+            missing.append("MANIFEST_DIR")
         if not project_dir:
-            missing.append('PROJECT_DIR')
+            missing.append("PROJECT_DIR")
         if not tmp_dir:
-            missing.append('TMP_DIR')
+            missing.append("TMP_DIR")
         
         if missing:
             raise ConfigError(

@@ -5,55 +5,65 @@ A comprehensive package for parsing, comparing, and managing software versions
 with multiple channel support (dev, alpha, beta, rc, stable, hotfix).
 """
 
-from .version import Version, parse, is_valid, sort_versions, latest_version, latest_stable
 from .config import Config
-from .models import Manifest, FileProperties, UpdateCheckResult
+from .core import ManifestManager, Packager, Updater
 from .exceptions import (
-    PackageError,
-    ManifestError,
+    ConfigError,
     FileError,
     HashError,
-    VersionError,
-    ConfigError,
+    ManifestError,
+    PackageError,
     PackError,
+    VersionError,
 )
+from .models import FileProperties, Manifest, UpdateCheckResult
 from .packages import (
-    get_latest_version,
     check_update,
-    pack_version,
+    get_all_versions,
+    get_latest_version,
     make_manifest,
+    pack_by_channel,
+    pack_version,
+    reset_config,
 )
-
-# Core classes for advanced usage
-from .core.manifest import ManifestManager
-from .core.packager import Packager
-from .core.updater import Updater
-
-# Utility functions
-from .utils.file_utils import IgnorePattern, ProjectFiles, ProjectConfig
-from .utils.hash_utils import generate_file_hash, verify_file_hash
-from .utils.zip_utils import create_zip_from_files, extract_zip, get_zip_file_list
+from .utils import (
+    IgnorePattern,
+    ProjectConfig,
+    ProjectFiles,
+    create_zip_from_files,
+    extract_zip,
+    generate_file_hash,
+    get_zip_file_list,
+    verify_file_hash,
+)
+from .version import (
+    InvalidVersion,  # ← ДОБАВИТЬ ЭТО
+    Version,
+    is_valid,
+    latest_stable,
+    latest_version,
+    parse,
+    sort_versions,
+)
 
 __version__ = "0.1.0"
 __author__ = "ovcharenski"
 
 __all__ = [
     # Version
+    "InvalidVersion",  # ← ДОБАВИТЬ ЭТО
     "Version",
     "parse",
     "is_valid",
     "sort_versions",
     "latest_version",
     "latest_stable",
-    
     # Config
     "Config",
-    
     # Models
     "Manifest",
     "FileProperties",
     "UpdateCheckResult",
-    
     # Exceptions
     "PackageError",
     "ManifestError",
@@ -62,18 +72,18 @@ __all__ = [
     "VersionError",
     "ConfigError",
     "PackError",
-    
     # Main API
     "get_latest_version",
     "check_update",
     "pack_version",
+    "pack_by_channel",
     "make_manifest",
-    
+    "get_all_versions",
+    "reset_config",
     # Core
     "ManifestManager",
     "Packager",
     "Updater",
-    
     # Utils
     "IgnorePattern",
     "ProjectFiles",
