@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omoshiroi-packager"  # ← с дефисом
-version = "0.1.1"
+version = "0.1.2"
 description = "Version parser with multiple channels support"
 readme = "README.md"
 license = {text = "MIT"}
